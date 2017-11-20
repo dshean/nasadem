@@ -32,11 +32,17 @@ All products have external overviews (*.ovr) derived using average resampling.  
 - hma_nasadem_hgt_aea_hs_az315.tif - shaded relief map, illumination azimuth 315°, elevation 45°
 - hma_nasadem_hgt_lt5m_err_aea_hs_az315.tif - shaded relief map
 
+![nasadem_hma_sm](https://user-images.githubusercontent.com/1103530/33039139-dcd13178-cdeb-11e7-9624-6faccd7af3ac.jpg)
+
 ### Error
 - hma_nasadem_err.tif - elevation error in mm, 16-bit Int
 
+![nasadem_hma_err_sm](https://user-images.githubusercontent.com/1103530/33039134-dca8ec90-cdeb-11e7-9e22-8485e869fb9a.jpg)
+
 ### Image
 - hma_nasadem_img.tif - mosaiced radar backscatter images, 8-bit
+
+![nasadem_hma_img_sm](https://user-images.githubusercontent.com/1103530/33039136-dcbce3b2-cdeb-11e7-9191-af22b690db98.jpg)
 
 # Tools
 
