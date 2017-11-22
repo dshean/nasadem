@@ -7,6 +7,13 @@ See here for more info about NASADEM effort: https://earthdata.nasa.gov/communit
 
 Provisional tiles downloaded from: https://e4ftl01.cr.usgs.gov/provisional/MEaSUREs/NASADEM/
 
+# Tools
+
+- `srtm_tilelist.py` - script to fetch tiles for given lat/lon bounds and product type
+- `srtm_proc.sh` - wrapper to process all downloaded tiles and create mosaics
+- `srtm_hdr.sh` - create an ENVI header for the raw tiles
+- `srtm_errmask.py` - create masked versions of hgt tiles for given error threshold
+
 # High-mountain Asia mosaics
 
 Mosaic parameters:
@@ -38,15 +45,10 @@ All products have external overviews (*.ovr) derived using average resampling.  
 - hma_nasadem_err.tif - elevation error in mm, 16-bit Int
 
 ![nasadem_hma_err_sm](https://user-images.githubusercontent.com/1103530/33039134-dca8ec90-cdeb-11e7-9e22-8485e869fb9a.jpg)
+Color ramp from 0 to 10 m
 
 ### Image
 - hma_nasadem_img.tif - mosaiced radar backscatter images, 8-bit
 
 ![nasadem_hma_img_sm](https://user-images.githubusercontent.com/1103530/33039136-dcbce3b2-cdeb-11e7-9191-af22b690db98.jpg)
-
-# Tools
-
-- `srtm_tilelist.py` - script to fetch tiles for given lat/lon bounds and product type
-- `srtm_proc.sh` - wrapper to process all downloaded tiles and create mosaics
-- `srtm_hdr.sh` - create an ENVI header for the raw tiles
-- `srtm_errmask.py` - create masked versions of hgt tiles for given error threshold
+Note that several tiles are missing from the provisional release.
