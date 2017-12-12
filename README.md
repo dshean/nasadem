@@ -51,4 +51,4 @@ Color ramp from 0 to 10 m
 - hma_nasadem_img.tif - mosaiced radar backscatter images, 8-bit
 
 ![nasadem_hma_img_sm](https://user-images.githubusercontent.com/1103530/33039136-dcbce3b2-cdeb-11e7-9191-af22b690db98.jpg)
-Note that several tiles are missing from the provisional release.
+Note that some tiles were missing when this figure was generated. These will be available in the final product release.
