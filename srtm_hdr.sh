@@ -41,10 +41,17 @@ elif [ "$ext" == "err" ] ; then
     #NOTE, should also add 32769 here
 fi
 
+cellsize=0.0002777777777777
+
+#The SRTM tile coordinates are for center of lower left pixel
+#Need to adjust for GDAL data model, lower left corner of lower left pixel
+lon=$(echo "scale=8; $lon - ($cellsize/2.)" | bc)
+lat=$(echo "scale=8; $lat - ($cellsize/2.)" | bc)
+
 echo -n > $hdr
 echo "ncols 3601" >> $hdr
 echo "nrows 3601" >> $hdr
-echo "cellsize 0.00027770063871" >> $hdr
+echo "cellsize $cellsize" >> $hdr
 echo "xllcorner $lon" >> $hdr 
 echo "yllcorner $lat" >> $hdr 
 echo "nodata_value $ndv" >> $hdr
