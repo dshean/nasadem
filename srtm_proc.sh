@@ -67,11 +67,6 @@ gdalwarp -overwrite $gdal_opt -r cubic -t_srs "$proj" -tr 30 30 nasadem_${ext}.v
 
 exit
 
-gdalwarp -overwrite $gdal_opt -r cubic -t_srs "$proj" -tr 90 90 nasadem_${ext}.vrt nasadem_${ext}_90m.tif
-hs.sh nasadem_${ext}_90m.tif
-gdaladdo_ro.sh nasadem_${ext}_90m.tif
-gdaladdo_ro.sh nasadem_${ext}_90m_hs_az315.tif
-
 #fn_list=$(ls *raw)
 
 #NASADEM hgt_srtmOnly_R4 (non void-filled) are float relative to ellipsoid
