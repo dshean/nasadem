@@ -7,12 +7,23 @@ See here for more info about NASADEM effort: https://earthdata.nasa.gov/communit
 
 Provisional tiles downloaded from: https://e4ftl01.cr.usgs.gov/provisional/MEaSUREs/NASADEM/
 
+# Requirements
+
+Some scripts rely on utilities in these packages:
+
+- [`pygeotools`](https://github.com/dshean/pygeotools)
+- [`gdal_tools`](https://github.com/dshean/pygeotools)
+- [GDAL/OGR](http://www.gdal.org/)
+- [NASA Ames Stereo Pipeline (ASP)](https://ti.arc.nasa.gov/tech/asr/intelligent-robotics/ngt/stereo/)
+- [NumPy](http://www.numpy.org/)
+
 # Tools
 
-- `srtm_tilelist.py` - script to fetch tiles for given lat/lon bounds and product type
 - `srtm_proc.sh` - wrapper to process all downloaded tiles and create mosaics
+- `srtm_tilelist.py` - script to fetch tiles for given lat/lon bounds and product type
 - `srtm_hdr.sh` - create an ENVI header for the raw tiles
-- `srtm_errmask.py` - create masked versions of hgt tiles for given error threshold
+- `srtm_post.sh` - post-process mosaics with error filter, vertical datum shift, reprojection, shaded relief map generation 
+- `srtm_errmask.py` - apply max error threshold filter to hgt tiles 
 
 # High-mountain Asia mosaics
 
