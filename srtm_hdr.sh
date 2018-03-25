@@ -3,6 +3,8 @@
 #Generate hdr files for NASADEM products
 #https://e4ftl01.cr.usgs.gov/provisional/MEaSUREs/NASADEM/
 
+#See documentation for descriptions of different data products and extensions
+
 #This hack because current GDAL SRTM driver doesn't read these data types
 #http://www.gdal.org/frmt_various.html#SRTMHGT
 
@@ -22,14 +24,18 @@ hdr=${fnbase}.hdr
 
 #Get extension
 #After extracting zip files, yielding .hgt files
-ext=${fn##*.}
+ext=${fn#*.}
 #When working with .hgt.zip files
 #ext=$(echo ${fn#*.} | awk -F'.' '{print $1}')
 
 if [ "$ext" == "hgt" ] ; then
+    nbits=16
+    dtype=signedint
+    ndv=-32768
+elif [ "$ext" == "srtmOnly.hgt" ] ; then
     nbits=32
     dtype=float
-    ndv=-32768.0
+    ndv=-32768
 elif [ "$ext" == "img" ] ; then
     nbits=8
     dtype=byte
@@ -37,8 +43,14 @@ elif [ "$ext" == "img" ] ; then
 elif [ "$ext" == "err" ] ; then
     nbits=16
     dtype=unsignedint
-    ndv=0
-    #NOTE, should also add 32769 here
+    #Note that there may be an issue with gdalwarp using dstnodata of 0 without an explicit value
+    #Doc says -32768, but haven't found any pixels with this value
+    #Lots of 32768 values, indicating clipped error values
+    ndv=32768
+elif [ "$ext" == "num" ] ; then
+    nbits=8
+    dtype=byte
+    ndv=255
 fi
 
 cellsize=0.0002777777777777
