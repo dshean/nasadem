@@ -42,11 +42,6 @@ cd $site
 #This defines the products to download and process
 productdir_list='hgt_srtmOnly_R4 err_I2 img_comb hgt_merge'
 
-#Filter, adjust vertical datum and reproject
-$srcdir/srtm_post.sh $site "$proj"
-
-exit
-
 for productdir in $productdir_list
 do
     echo
@@ -127,6 +122,7 @@ do
 
         #Build mosaic in original WGS84 coordinates
         if [ ! -e ${site}_nasadem_${productdir}_${ext}.vrt ] ; then
+            echo "Building vrt"
             gdalbuildvrt ${site}_nasadem_${productdir}_${ext}.vrt $fn_list
             #gdaladdo_ro.sh ${site}_nasadem_${ext}.vrt
             #gdal_translate $gdal_opt ${site}_nasadem_${ext}.vrt ${site}_nasadem_${ext}.tif
