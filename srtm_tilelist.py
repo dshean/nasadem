@@ -38,11 +38,17 @@ for i in range(lon[0], lon[1]+1):
         tile_list.append('N%02i%s%03i' % (j, ew, i))
 
 productdir = sys.argv[2]
-productdir_dict = {'hgt_srtmOnly_R4':'srtmOnly.hgt', 'hgt_merge':'hgt', 'img_comb':'img', 'err_I2':'err'}
+ext = sys.argv[3]
+
+#Can automatically infer extension, but best to keep this in one location
+"""
+productdir_dict = {'hgt_srtmOnly_R4':['srtmOnly.hgt',], 'hgt_merge':['hgt', 'num'], 'img_comb':['img',], 'err_I2':['err',]}
 if productdir in productdir_dict.keys():
-    ext = productdir_dict[productdir]
+    ext_list = productdir_dict[productdir]
 else:
     sys.exit("Invalid extension")
+for ext in ext_list:
+"""
 
 for tile in tile_list:
     print("%s/%s/%s/%s.%s.zip" % (topurl, sitedir, productdir, tile.lower(), ext))
