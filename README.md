@@ -25,6 +25,8 @@ Some scripts rely on utilities in these packages:
 - `srtm_post.sh` - post-process mosaics with error filter, vertical datum shift, reprojection, shaded relief map generation 
 - `srtm_errmask.py` - apply max error threshold filter to hgt tiles 
 
+Note: these were written for one-time processing of regional mosaics for existing projects.  They call several other scripts (listed in Requirements section), with limited error checks.  I've tried to clean up and generalize, but don't currently have time for further refinement or usage improvement.  Please treat them as a reference, and feel free to fork and modify hardcoded values for your own needs. 
+
 # High-mountain Asia mosaics
 
 Mosaic parameters:
