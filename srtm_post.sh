@@ -62,11 +62,11 @@ echo "Reprojecting mosaics and building overviews"
 vrt_list=$(ls */*/*vrt)
 #Note: may need to hardcode dstnodata value, specifically for err mosaic
 #parallel --verbose --progress "ndv=$(gdalinfo {} | grep NoData | awk -F= '{print $NF}'); gdalwarp $gdal_opt -overwrite -r cubic -dstnodata $ndv -t_srs \"$proj\" -tr 30 30 {} {.}_aea.tif; gdaladdo_ro.sh {.}_aea.tif" ::: $vrt_list
-parallel --verbose "if [ ! -e {.}_aea.tif ] ; then gdalwarp $gdal_opt -overwrite -r cubic -t_srs \"$proj\" -tr 30 30 {} {.}_aea.tif; gdaladdo_ro.sh {.}_aea.tif; fi" ::: $vrt_list
+parallel --verbose "if [ ! -e {.}_aea.tif ] ; then gdalwarp $gdal_opt -overwrite -r cubic -t_srs \"$proj\" -tr 30 30 {} {.}_aea.tif; if [ ! -e {.}_aea.tif.ovr ] ; then gdaladdo_ro.sh {.}_aea.tif; fi; fi" ::: $vrt_list
 
 #Generate shaded relief maps and build overviews
 echo "Generating shaded relief maps and building overviews"
 hs_list="hgt_merge/hgt/${site}_nasadem_hgt_merge_hgt_adj_aea.tif \
     hgt_srtmOnly_R4/srtmOnly.hgt/${site}_nasadem_hgt_srtmOnly_R4_srtmOnly.hgt_aea.tif \
     hgt_srtmOnly_R4/srtmOnly.hgt/${site}_nasadem_hgt_srtmOnly_R4_srtmOnly.hgt_lt5m_err_aea.tif"
-parallel --verbose --progress "if [ ! -e {.}_hs_az315.tif ] ; then hs.sh {}; gdaladdo_ro.sh {.}_hs_az315.tif; fi" ::: $hs_list
+parallel --verbose --progress "if [ ! -e {.}_hs_az315.tif ] ; then hs.sh {}; if [ ! -e {.}_hs_az315.tif.ovr ] ; then gdaladdo_ro.sh {.}_hs_az315.tif; fi; fi" ::: $hs_list
