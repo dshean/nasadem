@@ -34,21 +34,33 @@ proj='+proj=aea +lat_1=36 +lat_2=49 +lat_0=43 +lon_0=-115 +x_0=0 +y_0=0 +ellps=W
 #site='hma'
 #proj='+proj=aea +lat_1=25 +lat_2=47 +lat_0=36 +lon_0=85 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
 
+#Fuego
+#site='fuego'
+#proj='+proj=utm +zone=15 +ellps=WGS84 +units=m +no_defs'
+
+#Chad
+#site='chad'
+#proj='+proj=utm +zone=33 +ellps=WGS84 +units=m +no_defs'
+
 if [ ! -d $site ] ; then
     mkdir $site
 fi
 cd $site
 
 #This defines the products to download and process
-productdir_list='hgt_srtmOnly_R4 err_I2 img_comb hgt_merge'
+productdir_list='hgt_merge hgt_srtmOnly_R4 hgt_srtmOnly err_I2 img_comb'
+#productdir_list='hgt_merge'
 
 for productdir in $productdir_list
 do
     echo
     if [ "$productdir" == 'hgt_merge' ] ; then
-        ext_list='hgt num'
+        #ext_list='hgt num'
+        ext_list='hgt'
     elif [ "$productdir" == 'hgt_srtmOnly_R4' ] ; then
         ext_list='srtmOnly.hgt'
+    elif [ "$productdir" == 'hgt_srtmOnly' ] ; then
+        ext_list='hgts'
     elif [ "$productdir" == 'img_comb' ] ; then
         #ext_list='img img.num'
         ext_list='img'
