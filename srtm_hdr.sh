@@ -16,6 +16,9 @@ fnbase=${fn%.*}
 lat=$(echo $fn | cut -c 2-3)
 lon=$(echo $fn | cut -c 5-7)
 ew=$(echo $fn | cut -c 4)
+
+#Deal with postive west vs positive east longitude systems
+#Convert everything to positive east 
 if [ "$ew" == "w" ] ; then
     lon=-${lon}
 fi
@@ -56,7 +59,8 @@ fi
 cellsize=0.0002777777777777
 
 #The SRTM tile coordinates are for center of lower left pixel
-#Need to adjust for GDAL data model, lower left corner of lower left pixel
+#Need to adjust for ESRI hdr data model, lower left corner of lower left pixel
+#0.000138888888889
 lon=$(echo "scale=8; $lon - ($cellsize/2.)" | bc)
 lat=$(echo "scale=8; $lat - ($cellsize/2.)" | bc)
 
