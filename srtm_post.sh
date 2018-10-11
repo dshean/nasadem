@@ -52,21 +52,21 @@ fi
 
 #Code to reproject each tile, then mosaic
 #Likely faster than reprojecting the large EPSG:4326 mosaic
-#parallel -j 16 "gdalwarp $gdal_opt -overwrite -r cubic -t_srs \"$proj\" -dstnodata -32768 -tr 30 30 {} {.}_aea.tif" ::: $fn_list
-#fn_list=$(echo $fn_list | sed 's/.hgt/_aea.tif/g')
-#gdalbuildvrt nasadem_hgt_srtmOnly_R4_aea.vrt $fn_list 
+#parallel -j 16 "gdalwarp $gdal_opt -overwrite -r cubic -t_srs \"$proj\" -dstnodata -32768 -tr 30 30 {} {.}_proj.tif" ::: $fn_list
+#fn_list=$(echo $fn_list | sed 's/.hgt/_proj.tif/g')
+#gdalbuildvrt nasadem_hgt_srtmOnly_R4_proj.vrt $fn_list 
 
 #Reproject all mosaics to our regional equal-area projection and build overviews
 cd $topdir/$site
 echo "Reprojecting mosaics and building overviews"
 vrt_list=$(ls */*/*vrt)
 #Note: may need to hardcode dstnodata value, specifically for err mosaic
-#parallel --verbose --progress "ndv=$(gdalinfo {} | grep NoData | awk -F= '{print $NF}'); gdalwarp $gdal_opt -overwrite -r cubic -dstnodata $ndv -t_srs \"$proj\" -tr 30 30 {} {.}_aea.tif; gdaladdo_ro.sh {.}_aea.tif" ::: $vrt_list
-parallel --verbose "if [ ! -e {.}_aea.tif ] ; then gdalwarp $gdal_opt -overwrite -r cubic -t_srs \"$proj\" -tr 30 30 {} {.}_aea.tif; fi ; if [ ! -e {.}_aea.tif.ovr ] ; then gdaladdo_ro.sh {.}_aea.tif; fi" ::: $vrt_list
+#parallel --verbose --progress "ndv=$(gdalinfo {} | grep NoData | awk -F= '{print $NF}'); gdalwarp $gdal_opt -overwrite -r cubic -dstnodata $ndv -t_srs \"$proj\" -tr 30 30 {} {.}_proj.tif; gdaladdo_ro.sh {.}_proj.tif" ::: $vrt_list
+parallel --verbose "if [ ! -e {.}_proj.tif ] ; then gdalwarp $gdal_opt -overwrite -r cubic -t_srs \"$proj\" -tr 30 30 {} {.}_proj.tif; fi ; if [ ! -e {.}_proj.tif.ovr ] ; then gdaladdo_ro.sh {.}_proj.tif; fi" ::: $vrt_list
 
 #Generate shaded relief maps and build overviews
 echo "Generating shaded relief maps and building overviews"
-hs_list="hgt_merge/hgt/${site}_nasadem_hgt_merge_hgt_adj_aea.tif \
-    hgt_srtmOnly_R4/srtmOnly.hgt/${site}_nasadem_hgt_srtmOnly_R4_srtmOnly.hgt_aea.tif \
-    hgt_srtmOnly_R4/srtmOnly.hgt/${site}_nasadem_hgt_srtmOnly_R4_srtmOnly.hgt_lt5m_err_aea.tif"
+hs_list="hgt_merge/hgt/${site}_nasadem_hgt_merge_hgt_adj_proj.tif \
+    hgt_srtmOnly_R4/srtmOnly.hgt/${site}_nasadem_hgt_srtmOnly_R4_srtmOnly.hgt_proj.tif \
+    hgt_srtmOnly_R4/srtmOnly.hgt/${site}_nasadem_hgt_srtmOnly_R4_srtmOnly.hgt_lt5m_err_proj.tif"
 parallel --verbose --progress "if [ ! -e {.}_hs_az315.tif ] ; then hs.sh {}; fi ; if [ ! -e {.}_hs_az315.tif.ovr ] ; then gdaladdo_ro.sh {.}_hs_az315.tif; fi" ::: $hs_list
