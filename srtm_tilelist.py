@@ -29,6 +29,17 @@ elif site == "conus":
     lat = (31, 49)
     ew = "W"
     sitedir = 'NorthAmerica'
+elif site == "fuego":
+    #14.4747 -90.8806
+    lon = (89, 93)
+    lat = (12, 17)
+    ew = "W"
+    sitedir = 'SouthAmerica'
+elif site == "chad":
+    lon = (16, 19)
+    lat = (16, 18)
+    ew = "E"
+    sitedir = 'Africa'
 else:
     sys.exit("Need to manually specify site bounds")
 
