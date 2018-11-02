@@ -42,11 +42,12 @@ fi
 #Mask elevation values where err >= 5 m
 productdir=hgt_srtmOnly_R4
 ext=srtmOnly.hgt
-if [ ! -e $productdir/$ext/${site}_nasadem_${productdir}_${ext}_lt5m_err.vrt ] ; then 
-    echo "Filtering hgt_srtmOnly_R4 srtmOnly.hgt products, masking pixels with err >= 5 m"
-    parallel --plus --verbose --progress --delay 0.1 "$srcdir/srtm_errmask.py {} err_I2/err/{/..}.err" ::: $productdir/$ext/*.${ext}
+max_err=5
+if [ ! -e $productdir/$ext/${site}_nasadem_${productdir}_${ext}_lt${max_err}m_err.vrt ] ; then 
+    echo "Filtering hgt_srtmOnly_R4 srtmOnly.hgt products, masking pixels with err >= $max_err m"
+    parallel --plus --verbose --progress --delay 0.1 "$srcdir/dem_errmask.py {} err_I2/err/{/..}.err $max_err" ::: $productdir/$ext/*.${ext}
     cd $productdir/$ext
-    gdalbuildvrt ${site}_nasadem_${productdir}_${ext}_lt5m_err.vrt *_lt5m_err.tif
+    gdalbuildvrt ${site}_nasadem_${productdir}_${ext}_lt${max_err}m_err.vrt *_lt${max_err}m_err.tif
     cd $topdir/$site
 fi
 
@@ -68,5 +69,5 @@ parallel --verbose "if [ ! -e {.}_proj.tif ] ; then gdalwarp $gdal_opt -overwrit
 echo "Generating shaded relief maps and building overviews"
 hs_list="hgt_merge/hgt/${site}_nasadem_hgt_merge_hgt_adj_proj.tif \
     hgt_srtmOnly_R4/srtmOnly.hgt/${site}_nasadem_hgt_srtmOnly_R4_srtmOnly.hgt_proj.tif \
-    hgt_srtmOnly_R4/srtmOnly.hgt/${site}_nasadem_hgt_srtmOnly_R4_srtmOnly.hgt_lt5m_err_proj.tif"
+    hgt_srtmOnly_R4/srtmOnly.hgt/${site}_nasadem_hgt_srtmOnly_R4_srtmOnly.hgt_lt${max_err}m_err_proj.tif"
 parallel --verbose --progress "if [ ! -e {.}_hs_az315.tif ] ; then hs.sh {}; fi ; if [ ! -e {.}_hs_az315.tif.ovr ] ; then gdaladdo_ro.sh {.}_hs_az315.tif; fi" ::: $hs_list
