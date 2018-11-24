@@ -6,6 +6,8 @@
 #https://download.geoservice.dlr.de/TDM90/
 
 srcdir=~/src/nasadem
+topdir=/nobackup/deshean/data/tandemx/hma/
+cd $topdir
 
 #Download
 
@@ -23,35 +25,45 @@ pw=''
 
 #Process
 
+export gdal_opt="-co COMPRESS=LZW -co TILED=YES -co BIGTIFF=IF_SAFER"
 #export site='conus'
 #export proj='+proj=aea +lat_1=36 +lat_2=49 +lat_0=43 +lon_0=-115 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
 export site='hma'
 export proj='+proj=aea +lat_1=25 +lat_2=47 +lat_0=36 +lon_0=85 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs '
 
-function proc_lyr() {
-    gdal_opt="-co COMPRESS=LZW -co TILED=YES -co BIGTIFF=IF_SAFER"
+export mosdir='mos'
+if [ ! -d $mosdir ] ; then
+    mkdir -pv $mosdir
+fi
 
+#This is original ndv
+ndv=-32767
+#parallel --progress "gdal_edit.py -a_nodata $ndv {}" ::: TDM1_DEM*_C/DEM/*DEM.tif TDM1_DEM*_C/AUXFILES/*HEM.tif
+#parallel --progress "gdal_edit.py -a_nodata 0 {}" ::: TDM1_DEM*_C/AUXFILES/*{AM2,AMP,WAM,COV,COM,LSM}.tif
+
+#Mask DEM files using err products
+parallel --progress "$srcdir/tandemx_mask.py {}" ::: TDM1_DEM*_C
+
+function proc_lyr() {
     lyr=$1
-    lyr_list=$(ls */*/*$lyr.tif)
-    vrt=TDM1_DEM_90m_${site}_${lyr}.vrt
-    gdalbuildvrt -srcnodata -32767 -vrtnodata -32767 $vrt $lyr_list
+    lyr_list=$(ls TDM1*/*/*$lyr.tif)
+    vrt=$mosdir/TDM1_DEM_90m_${site}_${lyr}.vrt
+    #gdalbuildvrt -srcnodata $ndv -vrtnodata $ndv $vrt $lyr_list
+    gdalbuildvrt $vrt $lyr_list
     #Tried to avoid converting full-res tif, but overviews didn't work
-    #gdalwarp -of VRT -overwrite -dstnodata -32767 -r cubic -tr 90 90 -t_srs "$proj" $gdal_opt $vrt ${vrt%.*}_aea.vrt
+    #gdalwarp -of VRT -overwrite -dstnodata $ndv -r cubic -tr 90 90 -t_srs "$proj" $gdal_opt $vrt ${vrt%.*}_aea.vrt
     #vrt=${vrt%.*}_aea.vrt
     #gdaladdo_ro.sh $vrt 
-    gdalwarp -overwrite -dstnodata -32767 -r cubic -tr 90 90 -t_srs "$proj" $gdal_opt $vrt ${vrt%.*}_aea.tif
+    #gdalwarp -overwrite -dstnodata $ndv -r cubic -tr 90 90 -t_srs "$proj" $gdal_opt $vrt ${vrt%.*}_aea.tif
+    gdalwarp -overwrite -r cubic -tr 90 90 -t_srs "$proj" $gdal_opt $vrt ${vrt%.*}_aea.tif
     gdaladdo_ro.sh ${vrt%.*}_aea.tif
 }
 
-#Mask DEM files using err products
-max_err=1.5
-parallel --progress "$srcdir/dem_errmask.py {}/DEM/*DEM.tif {}/AUXFILES/*HEM.tif $max_err" ::: TDM1_DEM*_C
-
 export -f proc_lyr
-#ext_list="DEM DEM_lt${max_err}m_err HEM AMP"
-ext_list="DEM_lt${max_err}m_err"
+ext_list="DEM DEM_masked HEM AM2 AMP COM COV LSM WAM"
 parallel --progress "proc_lyr {}" ::: $ext_list
 
 #Create shaded relief map for DEM
-hs.sh TDM1_DEM_90m_${site}_DEM_aea.tif TDM1_DEM_90m_${site}_DEM_lt${max_err}m_err_aea.tif
-gdaladdo_ro.sh TDM1_DEM_90m_${site}_DEM_aea_hs_az*.tif TDM1_DEM_90m_${site}_DEM_lt${max_err}m_err_aea_hs_az*.tif
+cd $mosdir
+hs.sh TDM1_DEM_90m_${site}_DEM_aea.tif TDM1_DEM_90m_${site}_DEM_masked_aea.tif
+gdaladdo_ro.sh TDM1_DEM_90m_${site}_DEM_aea_hs_az*.tif TDM1_DEM_90m_${site}_DEM_masked_aea_hs_az*.tif
