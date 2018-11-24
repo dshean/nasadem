@@ -29,8 +29,8 @@ mask = np.ma.getmaskarray(dem)
 #Theoretical height error
 err_fn = glob.glob(os.path.join(tiledir, 'AUXFILES/*HEM.tif'))[0]
 err = iolib.fn_getma(err_fn)
-max_err = 1.5
-mask = np.logical_or(mask, (err.data > max_err))
+max_err_multi = 1.5
+mask = np.logical_or(mask, (err.data > max_err_multi))
 
 #Water mask
 wam_fn = glob.glob(os.path.join(tiledir, 'AUXFILES/*WAM.tif'))[0]
@@ -47,6 +47,10 @@ com_valid = (8,9,10)
 #com_invalid = (0,1,2,4)
 com_invalid = (0,1,2)
 mask = np.logical_or(mask, np.isin(com.data, com_invalid))
+
+#More stringent error threshold for single strip pixels
+#max_err_single = 1.0
+#mask = np.logical_or(mask, (com.data == 4) & (err.data > max_err_single))
 
 #Apply
 dem_masked = np.ma.array(dem, mask=mask)
