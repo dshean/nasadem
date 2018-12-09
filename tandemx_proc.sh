@@ -9,6 +9,9 @@ srcdir=~/src/nasadem
 topdir=/nobackup/deshean/data/tandemx/hma/
 cd $topdir
 
+#Turn off auto ls after cd
+unset -f cd
+
 #Download
 
 url_list=$1
@@ -38,25 +41,20 @@ fi
 
 #This is original ndv
 ndv=-32767
-#parallel --progress "gdal_edit.py -a_nodata $ndv {}" ::: TDM1_DEM*_C/DEM/*DEM.tif TDM1_DEM*_C/AUXFILES/*HEM.tif
-#parallel --progress "gdal_edit.py -a_nodata 0 {}" ::: TDM1_DEM*_C/AUXFILES/*{AM2,AMP,WAM,COV,COM,LSM}.tif
+parallel --progress "gdal_edit.py -a_nodata $ndv {}" ::: TDM1_DEM*_C/DEM/*DEM.tif TDM1_DEM*_C/AUXFILES/*HEM.tif
+parallel --progress "gdal_edit.py -a_nodata 0 {}" ::: TDM1_DEM*_C/AUXFILES/*{AM2,AMP,WAM,COV,COM,LSM}.tif
 
 #Mask DEM files using err products
 parallel --progress "$srcdir/tandemx_mask.py {}" ::: TDM1_DEM*_C
 
+cd $mosdir
+
 function proc_lyr() {
     lyr=$1
-    lyr_list=$(ls TDM1*/*/*$lyr.tif)
-    vrt=$mosdir/TDM1_DEM_90m_${site}_${lyr}.vrt
-    #gdalbuildvrt -srcnodata $ndv -vrtnodata $ndv $vrt $lyr_list
+    lyr_list=$(ls ../TDM1*/*/*$lyr.tif)
+    vrt=TDM1_DEM_90m_${site}_${lyr}.vrt
     gdalbuildvrt $vrt $lyr_list
-    #Tried to avoid converting full-res tif, but overviews didn't work
-    #gdalwarp -of VRT -overwrite -dstnodata $ndv -r cubic -tr 90 90 -t_srs "$proj" $gdal_opt $vrt ${vrt%.*}_aea.vrt
-    #vrt=${vrt%.*}_aea.vrt
-    #gdaladdo_ro.sh $vrt 
-    #gdalwarp -overwrite -dstnodata $ndv -r cubic -tr 90 90 -t_srs "$proj" $gdal_opt $vrt ${vrt%.*}_aea.tif
-    gdalwarp -overwrite -r cubic -tr 90 90 -t_srs "$proj" $gdal_opt $vrt ${vrt%.*}_aea.tif
-    gdaladdo_ro.sh ${vrt%.*}_aea.tif
+    cd ..
 }
 
 export -f proc_lyr
@@ -64,6 +62,10 @@ ext_list="DEM DEM_masked HEM AM2 AMP COM COV LSM WAM"
 parallel --progress "proc_lyr {}" ::: $ext_list
 
 #Create shaded relief map for DEM
-cd $mosdir
+lyr=DEM
+#lyr=DEM_masked
+vrt=TDM1_DEM_90m_${site}_${lyr}.vrt
+gdalwarp -overwrite -r cubic -tr 90 90 -t_srs "$proj" $gdal_opt $vrt ${vrt%.*}_aea.tif
+gdaladdo_ro.sh ${vrt%.*}_aea.tif
 hs.sh TDM1_DEM_90m_${site}_DEM_aea.tif TDM1_DEM_90m_${site}_DEM_masked_aea.tif
 gdaladdo_ro.sh TDM1_DEM_90m_${site}_DEM_aea_hs_az*.tif TDM1_DEM_90m_${site}_DEM_masked_aea_hs_az*.tif

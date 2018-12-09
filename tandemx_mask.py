@@ -12,7 +12,7 @@ from pygeotools.lib import iolib
 import numpy as np
 
 if len(sys.argv) != 2:
-    sys.exit("Usage: 'mask_tandemx.py tiledir'")
+    sys.exit("Usage: '%s tiledir'" % sys.argv[0])
 else:
     tiledir = sys.argv[1]
 
