@@ -1,6 +1,8 @@
 # nasadem
 Scripts to download and process the NASADEM SRTM products
 
+* Note: TanDEM-X global mosaic processing scripts moved here: https://github.com/dshean/tandemx *
+
 # NASADEM SRTM products (provisional)
 
 See here for more info about NASADEM effort: https://earthdata.nasa.gov/community/community-data-system-programs/measures-projects/nasadem
