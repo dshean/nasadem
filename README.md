@@ -5,9 +5,11 @@ Scripts to download and process the NASADEM SRTM products
 
 # NASADEM SRTM products (provisional)
 
-See here for more info about NASADEM effort: https://earthdata.nasa.gov/community/community-data-system-programs/measures-projects/nasadem
+Information about the NASADEM project: https://earthdata.nasa.gov/esds/competitive-programs/measures/nasadem
 
-Provisional tiles downloaded from: https://e4ftl01.cr.usgs.gov/provisional/MEaSUREs/NASADEM/
+Offical data product release: https://lpdaac.usgs.gov/news/release-nasadem-data-products/
+
+Provisional tiles (used for this repo) downloaded from: https://e4ftl01.cr.usgs.gov/provisional/MEaSUREs/NASADEM/
 
 # Requirements
 
